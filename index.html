@@ -1,0 +1,236 @@
+
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Mundo Bebidas</title>
+
+<style>
+body{
+    margin:0;
+    font-family: 'Segoe UI', sans-serif;
+    background:#0f172a;
+    color:white;
+}
+
+/* HEADER */
+header{
+    background:#020617;
+    text-align:center;
+    padding:20px;
+    font-size:24px;
+    font-weight:bold;
+}
+
+/* NAV */
+nav{
+    background:#1e293b;
+    text-align:center;
+    padding:10px;
+}
+
+nav button{
+    margin:5px;
+    padding:10px 15px;
+    border:none;
+    border-radius:20px;
+    background:#38bdf8;
+    color:black;
+    font-weight:bold;
+    cursor:pointer;
+}
+
+/* SECCIONES */
+.seccion{
+    display:none;
+    padding:20px;
+    max-width:420px;
+    margin:auto;
+}
+
+/* BUSCADOR */
+.buscador{
+    width:100%;
+    padding:12px;
+    border-radius:25px;
+    border:none;
+    margin-bottom:15px;
+    font-size:16px;
+}
+
+/* TARJETAS */
+.tarjeta{
+    background:#1e293b;
+    padding:15px;
+    margin:12px 0;
+    border-radius:15px;
+    box-shadow:0 4px 10px rgba(0,0,0,0.4);
+}
+
+/* BOTONES */
+button.grande{
+    width:100%;
+    padding:12px;
+    border:none;
+    border-radius:25px;
+    background:#22c55e;
+    color:white;
+    font-weight:bold;
+    cursor:pointer;
+}
+
+/* INPUTS */
+input, textarea{
+    width:95%;
+    padding:12px;
+    margin:8px 0;
+    border-radius:10px;
+    border:none;
+}
+
+/* FOOTER */
+footer{
+    background:#020617;
+    text-align:center;
+    padding:10px;
+    margin-top:20px;
+}
+</style>
+</head>
+
+<body>
+
+<header>
+🍹 Mundo Bebidas
+</header>
+
+<nav>
+<button onclick="mostrar('inicio')">Inicio</button>
+<button onclick="mostrar('bebidas')">Bebidas</button>
+<button onclick="mostrar('favoritos')">Favoritos</button>
+<button onclick="mostrar('contacto')">Contacto</button>
+</nav>
+
+<!-- INICIO -->
+<div id="inicio" class="seccion">
+<h3>Bienvenido</h3>
+<p>Explora bebidas alcohólicas de todo el mundo 🍸</p>
+<button class="grande" onclick="mostrar('bebidas')">
+Explorar bebidas
+</button>
+</div>
+
+<!-- BEBIDAS -->
+<div id="bebidas" class="seccion">
+<h3>🍸 Catálogo</h3>
+
+<input type="text" id="buscador" class="buscador" placeholder="🔍 Buscar bebida..." onkeyup="filtrar()">
+
+<div id="listaBebidas"></div>
+</div>
+
+<!-- FAVORITOS -->
+<div id="favoritos" class="seccion">
+<h3>⭐ Favoritos</h3>
+<div id="listaFavoritos">No tienes bebidas favoritas</div>
+</div>
+
+<!-- CONTACTO -->
+<div id="contacto" class="seccion">
+<h3>📞 Contacto</h3>
+<input type="text" placeholder="Nombre">
+<input type="email" placeholder="Correo">
+<textarea placeholder="Mensaje"></textarea>
+<button class="grande">Enviar</button>
+</div>
+
+<footer>
+Mundo Bebidas © 2026
+</footer>
+
+<script>
+
+/* DATOS */
+let bebidas = [
+    {nombre:"Mojito", descripcion:"Refrescante con menta y limón"},
+    {nombre:"Margarita", descripcion:"Tequila con limón y sal"},
+    {nombre:"Whisky", descripcion:"Bebida fuerte y elegante"},
+    {nombre:"Cerveza", descripcion:"Clásica y refrescante"},
+    {nombre:"Ron", descripcion:"Dulce y tropical"}
+];
+
+let favoritos = JSON.parse(localStorage.getItem("favoritos")) || [];
+
+/* NAVEGACIÓN */
+function mostrar(id){
+    let secciones = document.querySelectorAll(".seccion");
+    secciones.forEach(sec => sec.style.display="none");
+    document.getElementById(id).style.display="block";
+}
+mostrar("inicio");
+
+/* MOSTRAR BEBIDAS */
+function mostrarBebidas(lista = bebidas){
+    let contenedor = document.getElementById("listaBebidas");
+    contenedor.innerHTML = "";
+
+    lista.forEach((bebida, index) => {
+        contenedor.innerHTML += `
+        <div class="tarjeta">
+            <h4>${bebida.nombre}</h4>
+            <p>${bebida.descripcion}</p>
+            <button class="grande" onclick="agregarFavorito(${index})">
+                ❤️ Favorito
+            </button>
+        </div>
+        `;
+    });
+}
+
+/* BUSCADOR */
+function filtrar(){
+    let texto = document.getElementById("buscador").value.toLowerCase();
+
+    let filtradas = bebidas.filter(b =>
+        b.nombre.toLowerCase().includes(texto)
+    );
+
+    mostrarBebidas(filtradas);
+}
+
+/* FAVORITOS */
+function agregarFavorito(index){
+    favoritos.push(bebidas[index]);
+    localStorage.setItem("favoritos", JSON.stringify(favoritos));
+    mostrarFavoritos();
+}
+
+function mostrarFavoritos(){
+    let contenedor = document.getElementById("listaFavoritos");
+
+    if(favoritos.length === 0){
+        contenedor.innerHTML = "No tienes bebidas favoritas";
+        return;
+    }
+
+    contenedor.innerHTML = "";
+
+    favoritos.forEach(b => {
+        contenedor.innerHTML += `
+        <div class="tarjeta">
+            <h4>${b.nombre}</h4>
+            <p>${b.descripcion}</p>
+        </div>
+        `;
+    });
+}
+
+/* INICIALIZACIÓN */
+mostrarBebidas();
+mostrarFavoritos();
+
+</script>
+
+</body>
+</html>
